@@ -30,4 +30,36 @@ describe("String Calculator", function() {
         expect(calculator.add(arg)).toBe(sum)
     })
 
+    test("should allow \\n in between the input number string", function() {
+        expect(calculator.add("1\n2,3")).toBe(6)
+    })
+
+    test("should not allow a single negative number and show it in the error message", function() {
+        expect(() => calculator.add("-1,2,3")).toThrow('negative numbers not allowed: -1')
+    })
+
+    test("should not allow multiple negative numbers and show all of them in the error message", function() {
+        expect(() => calculator.add("-1,2,-3")).toThrow('negative numbers not allowed: -1, -3')
+    })
+
+    test("should allow custom delimiter and return the sum", function() {
+        expect(calculator.add("//;\n1;2")).toBe(3)
+    })
+
+    test("should handle custom delimiter with multiple characters", function() {
+        expect(calculator.add("//[***]\n1***2***3")).toBe(6)
+    })
+
+    test("should ignore numbers greater than 1000 and return the sum", function() {
+        expect(calculator.add("2,1001")).toBe(2)
+        expect(calculator.add("//;\n2;1001")).toBe(2)
+    })
+
+    test("should handle large numbers correctly, ignoring those greater than 1000", function() {
+        const numbers = Array.from({ length: 1000 }, () => Math.floor(Math.random() * 2000)).join(',')
+        const sum = numbers.split(',').filter(n => Number(n) <= 1000).reduce((a, b) => a + Number(b), 0)
+        expect(calculator.add(numbers)).toBe(sum)
+    })
+
+
 })
